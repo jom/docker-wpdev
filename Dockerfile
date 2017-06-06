@@ -14,9 +14,9 @@ RUN \
 	add-apt-repository -y ppa:nginx/stable && \
 	apt-get update && \
 	apt-get -y install nginx gettext-base ruby ruby-dev build-essential libsqlite3-dev mysql-client git nano libevent-dev pwgen wget unzip && \
-	apt-get -y install php5.6-fpm php5.6-mysql php5.6-curl php5.6-cli php5.6-gd php5.6-intl && \
-	apt-get -y install php7.0-fpm php7.0-mysql php7.0-curl php7.0-cli php7.0-gd php7.0-intl && \
-	apt-get -y install php7.1-fpm php7.1-mysql php7.1-curl php7.1-cli php7.1-gd php7.1-intl && \
+	apt-get -y install php5.6-fpm php5.6-mysql php5.6-curl php5.6-cli php5.6-gd php5.6-intl php5.6-xml && \
+	apt-get -y install php7.0-fpm php7.0-mysql php7.0-curl php7.0-cli php7.0-gd php7.0-intl php7.0-xml && \
+	apt-get -y install php7.1-fpm php7.1-mysql php7.1-curl php7.1-cli php7.1-gd php7.1-intl php7.1-xml && \
 	gem install mailcatcher --no-rdoc --no-ri
 
 # Clean up APT when done.
@@ -98,7 +98,7 @@ RUN mkdir -p /persist/etc && \
 ENV PATH /persist/bin:$PATH
 
 # Data volumes
-VOLUME ["/var/www", "/var/www/cron", "/persist"]
+VOLUME ["/var/www", "/var/www/cron", "/var/www/logs", "/persist"]
 
 # Expose 80 to the host
 EXPOSE 80
