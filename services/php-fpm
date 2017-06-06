@@ -1,4 +1,4 @@
 #!/bin/sh
-exec /bin/ln -s /var/run/php/php${PHP_VERSION}-fpm.sock /var/run/php/php-fpm.sock
-exec /bin/chown -h www-data:www-data /var/run/php/php-fpm.sock
+/bin/ln -s /var/run/php/php${PHP_VERSION}-fpm.sock /var/run/php/php-fpm.sock
+/bin/chown -h www-data:www-data /var/run/php/php-fpm.sock
 exec /usr/sbin/php-fpm${PHP_VERSION} -c /etc/php/${PHP_VERSION}/fpm
