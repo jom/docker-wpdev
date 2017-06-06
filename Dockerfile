@@ -13,11 +13,14 @@ RUN \
 	add-apt-repository ppa:ondrej/php && \
 	add-apt-repository -y ppa:nginx/stable && \
 	apt-get update && \
-	apt-get -y install nginx gettext-base ruby ruby-dev mysql-client git nano libevent-dev pwgen wget unzip && \
+	apt-get -y install nginx gettext-base ruby ruby-dev build-essential libsqlite3-dev mysql-client git nano libevent-dev pwgen wget unzip && \
 	apt-get -y install php5.6-fpm php5.6-mysql php5.6-curl php5.6-cli php5.6-gd php5.6-intl && \
 	apt-get -y install php7.0-fpm php7.0-mysql php7.0-curl php7.0-cli php7.0-gd php7.0-intl && \
 	apt-get -y install php7.1-fpm php7.1-mysql php7.1-curl php7.1-cli php7.1-gd php7.1-intl && \
 	gem install mailcatcher --no-rdoc --no-ri
+
+# Clean up APT when done.
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN usermod -u 1000 -s /bin/bash www-data
 
@@ -64,9 +67,7 @@ ADD ./conf/php.ini /etc/php/7.1/fpm/conf.d/00_custom.ini
 # Add runit files for each service
 ADD ./services/nginx /etc/service/nginx/run
 ADD ./services/mailcatcher /etc/service/mailcatcher/run
-ADD ./services/php-fpm-56 /etc/service/php-fpm-56/run
-ADD ./services/php-fpm-70 /etc/service/php-fpm-70/run
-ADD ./services/php-fpm-71 /etc/service/php-fpm-71/run
+ADD ./services/php-fpm /etc/service/php-fpm/run
 ADD ./services/custom-service /etc/service/custom-service/run
 
 ADD ./shell/start.sh /etc/my_init.d/001_web.sh
@@ -79,9 +80,7 @@ ADD ./shell/composer-setup /usr/local/bin/composer-setup
 RUN \
 	chmod +x /etc/service/nginx/run && \
 	chmod +x /etc/service/mailcatcher/run && \
-	chmod +x /etc/service/php-fpm-56/run && \
-	chmod +x /etc/service/php-fpm-70/run && \
-	chmod +x /etc/service/php-fpm-71/run && \
+	chmod +x /etc/service/php-fpm/run && \
 	chmod +x /etc/service/custom-service/run && \
 	chmod +x /usr/local/bin/composer && \
 	chmod +x /usr/local/bin/composer-setup && \ 
@@ -114,9 +113,7 @@ RUN \
 	(crontab -l ; echo "0 1 * * 0 sudo -u www-data /var/www/cron/weekly.cron.sh") | sort - | uniq - | crontab - && \
 	(crontab -l ; echo "0 2 1 * * sudo -u www-data /var/www/cron/monthly.cron.sh") | sort - | uniq - | crontab -
 
-# Clean up APT when done.
-RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
 ENV NGINX_PUBLIC_DIRECTORY web
+ENV PHP_VERSION 7.1
 
 WORKDIR /var/www
